@@ -1,2 +1,2 @@
 # tasks
-решение по ТЗ
+https://practiceit.cs.washington.edu/problem/list
