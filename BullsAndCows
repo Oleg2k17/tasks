@@ -1,0 +1,119 @@
+public class BullsAndCows {
+
+    static int BIT = 4;
+
+    public static void main(String[] args) {
+
+        Game game = new Game();
+
+        if (BIT < 2) {
+            System.out.println("Внимание сачок в игре, за борт его!!! Увеличь разрадность числа умник!");
+        } else {
+            String pcNumber = game.machineNum(BIT);
+            System.out.println(pcNumber);
+            int bulls;
+            do {
+                String userNumber = game.humanNum(BIT);
+                System.out.println(userNumber);
+                bulls = game.checkNumber(pcNumber, userNumber);
+            } while (bulls != BIT);
+            System.out.println("Поздравляю ты таки догадался!!!");
+        }
+    }
+}
+
+
+/*
+* basis class Game
+*/
+
+import java.util.Random;
+import java.util.Scanner;
+
+class Game {
+
+    private Scanner SCANNER = new Scanner(System.in);
+    private Random RANDOM = new Random();
+
+    public Game() {
+
+    }
+
+    String machineNum(int bitNumber) { // метод загадывания компьютером числа
+        String machineNum = "";
+        int i = 0;
+        for (; i < bitNumber; i++) {
+            int rnd = RANDOM.nextInt(10);
+            if (i > 0) {
+                while (notRepeat(machineNum, rnd)) { // элемент перезагадывания числа если повторяется
+                    rnd = RANDOM.nextInt(10);
+                }
+                machineNum += rnd;
+            }
+            if (i == 0) {
+                machineNum += rnd;
+            }
+        }
+        return machineNum;
+    }
+
+    private boolean notRepeat(String text, int rnd) { // метод проверки неповторяемости чисел
+        String str = Integer.toString(rnd);
+        for (int j = 0; j < text.length(); j++) {
+            if (text.charAt(j) == str.charAt(0)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    String humanNum(int bitNumber) { // метод ввода корректных данных пользователем
+        String userNum;
+        do {
+            if (bitNumber < 5) {
+                System.out.printf("Введите %d-х значное число: ", bitNumber);
+            } else {
+                System.out.printf("Введите %d-ти значное число: ", bitNumber);
+            }
+            userNum = SCANNER.next();
+        } while (isNumber(userNum) || isNeedBit(userNum, bitNumber));
+        return userNum;
+    }
+
+    private boolean isNumber(String number) { // метод проверки данных
+        if (number == null || number.isEmpty()) { // на то, ввод с консоли содержит данные
+            return true;
+        }
+        for (int i = 0; i < number.length(); i++) { // на то, что данные содержат только цифры
+            if (!Character.isDigit(number.charAt(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isNeedBit(String number, int bitNumber) { // метод проверки данных введенных пользователем на разрядность числа
+        return number.length() != bitNumber;
+    }
+
+    int checkNumber(String oneNum, String twoNum) { // метод сравнения чисел машины и пользователя
+        int bulls = 0;
+        int cows = 0;
+        for (int i = 0; i < oneNum.length(); i++) {
+            for (int j = 0; j < twoNum.length(); j++) {
+                if (oneNum.charAt(i) == twoNum.charAt(j)) {
+                    if (oneNum.charAt(i) == twoNum.charAt(i)) {
+                        bulls++;
+                        break;
+                    } else {
+                        cows++;
+                        break;
+                    }
+                }
+            }
+        }
+        System.out.printf("%s--%dБ%dК\n", twoNum, bulls, cows);
+        return bulls;
+    }
+}
+
